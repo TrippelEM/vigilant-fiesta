@@ -109,7 +109,6 @@ def main():
     game = Game()
     state = game.initial_state()
     game.print(state)
-    start_time = time.perf_counter()
     while not game.is_terminal(state):
         cur_player = game.to_move(state)
         action = alpha_beta_search(game, state) # The player whose turn it is
@@ -118,26 +117,24 @@ def main():
         assert action is not None
         state = game.result(state, action)
         game.print(state)
-    end_time = time.perf_counter()
-    elapsed_time = end_time - start_time
-    print(f"alpha-beta pruning execution time: {elapsed_time:.4f} seconds")
 
+def runtime():
+    # Time first move with Alpha-Beta
     game = Game()
     state = game.initial_state()
-    game.print(state)
-    start_time = time.perf_counter()
-    while not game.is_terminal(state):
-        cur_player = game.to_move(state)
-        action = minimax_search(game, state) # The player whose turn it is
-                                                # is the MAX player
-        print(f'P{cur_player+1}\'s action: {action}')
-        assert action is not None
-        state = game.result(state, action)
-        game.print(state)
-    end_time = time.perf_counter()
-    elapsed_time = end_time - start_time
-    print(f"minimax execution time: {elapsed_time:.4f} seconds")
+    t0 = time.perf_counter()
+    ab_move = alpha_beta_search(game, state)
+    t1 = time.perf_counter()
+    print(f"alpha-beta first move: {ab_move}, time: {t1 - t0:.4f} seconds")
 
+    # Time first move with plain Minimax
+    game = Game()
+    state = game.initial_state()
+    t0 = time.perf_counter()
+    mm_move = minimax_search(game, state)  # imported from halving_game
+    t1 = time.perf_counter()
+    print(f"minimax first move: {mm_move}, time: {t1 - t0:.4f} seconds")
 
 if __name__ == "__main__":
     main()
+    runtime()
