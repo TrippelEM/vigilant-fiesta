@@ -1,6 +1,7 @@
 import math
+import time
 from copy import deepcopy
-
+from halving_game import minimax_search
 State = tuple[int, list[list[int | None]]]  # Tuple of player (whose turn it is),
                                             # and board
 Action = tuple[int, int]  # Where to place the player's piece
@@ -106,9 +107,9 @@ def min_value(game:Game, state:State,alpha:float, beta:float, player:int) -> tup
 
 def main():
     game = Game()
-
     state = game.initial_state()
     game.print(state)
+    start_time = time.perf_counter()
     while not game.is_terminal(state):
         cur_player = game.to_move(state)
         action = alpha_beta_search(game, state) # The player whose turn it is
@@ -117,6 +118,26 @@ def main():
         assert action is not None
         state = game.result(state, action)
         game.print(state)
+    end_time = time.perf_counter()
+    elapsed_time = end_time - start_time
+    print(f"alpha-beta pruning execution time: {elapsed_time:.4f} seconds")
+
+    game = Game()
+    state = game.initial_state()
+    game.print(state)
+    start_time = time.perf_counter()
+    while not game.is_terminal(state):
+        cur_player = game.to_move(state)
+        action = minimax_search(game, state) # The player whose turn it is
+                                                # is the MAX player
+        print(f'P{cur_player+1}\'s action: {action}')
+        assert action is not None
+        state = game.result(state, action)
+        game.print(state)
+    end_time = time.perf_counter()
+    elapsed_time = end_time - start_time
+    print(f"minimax execution time: {elapsed_time:.4f} seconds")
+
 
 if __name__ == "__main__":
     main()
